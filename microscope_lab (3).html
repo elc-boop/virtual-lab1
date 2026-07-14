@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>معمل افتراضي: المجهر والأنسجة الأساسية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#150f19;
+  --bg2:#1d1420;
+  --panel:#241a2a;
+  --panel2:#2b1f32;
+  --line:rgba(245,236,243,.14);
+  --hema:#8a5ec4;
+  --hema-dim:#5a3d80;
+  --eosin:#e2699c;
+  --eosin-deep:#b23e6e;
+  --eosin-pale:#f3cede;
+  --amber:#f0b93f;
+  --text:#f5ecf3;
+  --muted:#d3c1da;
+  --good:#6fcf97;
+  --bad:#eb6767;
+  --radius:14px;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:
+    radial-gradient(1200px 700px at 85% -10%, rgba(138,94,196,.18), transparent 60%),
+    radial-gradient(900px 600px at 5% 110%, rgba(226,105,156,.14), transparent 60%),
+    var(--bg);
+  color:var(--text);
+  font-family:'Cairo',sans-serif;
+  line-height:1.7;
+}
+h1,h2,h3,.display{font-family:'Amiri',serif;}
+.mono{font-family:'IBM Plex Mono',monospace; direction:ltr; display:inline-block;}
+a{color:var(--eosin);}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 80px;}
+
+/* ---- Header ---- */
+header.hero{
+  padding:56px 20px 40px;
+  border-bottom:1px solid var(--line);
+  position:relative;
+  overflow:hidden;
+}
+header.hero::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:
+    radial-gradient(3px 3px at 20% 30%, rgba(226,105,156,.35), transparent 60%),
+    radial-gradient(4px 4px at 70% 60%, rgba(138,94,196,.35), transparent 60%),
+    radial-gradient(2px 2px at 40% 80%, rgba(240,185,63,.3), transparent 60%),
+    radial-gradient(3px 3px at 85% 20%, rgba(226,105,156,.3), transparent 60%);
+  pointer-events:none;
+}
+.hero-inner{max-width:1180px;margin:0 auto;position:relative;}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;letter-spacing:.06em;
+  color:var(--amber);
+  background:rgba(240,185,63,.09);
+  border:1px solid rgba(240,185,63,.35);
+  padding:5px 12px;border-radius:100px;
+  direction:rtl;
+}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 8px var(--amber);}
+h1.title{font-size:clamp(28px,4.2vw,44px);margin:18px 0 10px;font-weight:700;color:#fff;}
+h1.title em{font-style:normal;color:var(--eosin);}
+.subtitle{color:var(--muted);max-width:760px;font-size:16.5px;}
+.meta-row{display:flex;gap:22px;flex-wrap:wrap;margin-top:22px;color:var(--muted);font-size:14px;}
+.meta-row b{color:var(--text);font-weight:700;}
+
+/* ---- Stepper ---- */
+.stepper{
+  position:sticky; top:0; z-index:50;
+  background:rgba(21,15,25,.92);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.stepper-track{
+  max-width:1180px;margin:0 auto;
+  display:flex; overflow-x:auto; gap:2px;
+  padding:0 20px;
+}
+.step-btn{
+  flex:1 1 auto; min-width:150px;
+  background:none;border:none;color:var(--muted);
+  font-family:'Cairo',sans-serif;font-weight:700;font-size:14px;
+  padding:16px 10px; cursor:pointer;
+  border-bottom:3px solid transparent;
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  transition:.15s;
+}
+.step-btn .num{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--hema);}
+.step-btn.active{color:#fff;border-bottom-color:var(--eosin);}
+.step-btn.active .num{color:var(--eosin);}
+.step-btn:hover{color:#fff;}
+.step-btn:disabled{opacity:.35;cursor:not-allowed;}
+.step-btn.locked{opacity:.4;cursor:not-allowed;}
+.step-btn.locked:hover{color:var(--muted);}
+.step-btn .lockicon{font-size:11px;}
+
+/* ---- Sections ---- */
+section.stage{display:none;padding-top:44px;animation:fadeIn .4s ease;}
+section.stage.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+.stage-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px;flex-wrap:wrap;}
+.stage-tag{font-family:'IBM Plex Mono',monospace;color:var(--hema);font-size:13px;letter-spacing:.05em;}
+.stage-head h2{font-size:28px;margin:0;color:#fff;}
+.stage-desc{color:var(--muted);max-width:820px;margin-bottom:30px;font-size:15.5px;}
+
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--panel2));
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:24px;
+  margin-bottom:22px;
+}
+.card h3{margin-top:0;color:#fff;font-size:19px;}
+.grid2{display:grid;grid-template-columns:1.05fr .95fr;gap:22px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+@media (max-width:880px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+.badge{
+  display:inline-block;padding:3px 10px;border-radius:100px;
+  font-size:12px;font-family:'IBM Plex Mono',monospace;
+  border:1px solid var(--line);color:var(--muted);
+}
+
+/* ---- Scenario ---- */
+.scenario-card{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;}
+.scenario-icon{
+  width:64px;height:64px;flex:none;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, var(--eosin-pale), var(--eosin-deep));
+  border:2px solid var(--hema-dim);
+  display:flex;align-items:center;justify-content:center;font-size:28px;
+}
+.tissue-pills{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
+.pill{
+  padding:8px 14px;border-radius:10px;border:1px solid var(--line);
+  background:rgba(255,255,255,.03); font-size:14px; color:var(--muted);
+}
+
+/* ---- Microscope ---- */
+.scope-layout{display:grid;grid-template-columns:460px 1fr;gap:26px;align-items:start;}
+@media (max-width:960px){.scope-layout{grid-template-columns:1fr;}}
+.scope-stand{
+  background:radial-gradient(120% 100% at 50% 0%, #2c2033, #150f19 75%);
+  border:1px solid var(--line); border-radius:20px; padding:26px;
+  display:flex; flex-direction:column; align-items:center;
+}
+.eyepiece{
+  position:relative; width:380px; height:380px; max-width:100%;
+  border-radius:50%;
+  background:#000;
+  box-shadow:
+    inset 0 0 0 10px #0b0710,
+    inset 0 0 40px 10px rgba(0,0,0,.9),
+    0 0 0 3px var(--hema-dim),
+    0 0 40px rgba(138,94,196,.25);
+  overflow:hidden;
+}
+.eyepiece canvas{position:absolute; inset:0; width:100%; height:100%;}
+.eyepiece .ring{
+  position:absolute; inset:0; border-radius:50%;
+  box-shadow: inset 0 0 60px 30px rgba(0,0,0,.85);
+  pointer-events:none;
+}
+.eyepiece .crosshair{position:absolute;inset:0;pointer-events:none;opacity:.18;}
+.eyepiece .crosshair::before, .eyepiece .crosshair::after{
+  content:"";position:absolute;background:#fff;
+}
+.eyepiece .crosshair::before{top:0;bottom:0;left:50%;width:1px;}
+.eyepiece .crosshair::after{right:0;left:0;top:50%;height:1px;}
+.readout{
+  margin-top:16px; width:100%; max-width:380px;
+  display:grid; grid-template-columns:1fr 1fr; gap:8px 16px;
+  font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--muted);
+}
+.readout b{color:var(--amber); display:block; font-size:16px;}
+.controls{display:flex;flex-direction:column;gap:18px;}
+.control-block label{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin-bottom:6px;}
+.control-block label span.val{color:var(--amber);font-family:'IBM Plex Mono',monospace;}
+input[type=range]{width:100%;accent-color:var(--eosin);}
+.obj-row{display:flex;gap:8px;flex-wrap:wrap;}
+.obj-btn{
+  flex:1; min-width:70px; padding:10px 6px; border-radius:10px;
+  border:1px solid var(--line); background:rgba(255,255,255,.03);
+  color:var(--muted); font-family:'IBM Plex Mono',monospace; font-weight:600; cursor:pointer;
+}
+.obj-btn.active{background:var(--hema-dim); color:#fff; border-color:var(--hema);}
+.toggle-row{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted);}
+.toggle-row input{accent-color:var(--eosin);width:18px;height:18px;}
+.tissue-select select, select, textarea, input[type=text]{
+  width:100%; padding:10px 12px; border-radius:10px;
+  background:rgba(0,0,0,.25); color:var(--text);
+  border:1px solid var(--line); font-family:'Cairo',sans-serif; font-size:14.5px;
+}
+.btn{
+  display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+  border:1px solid var(--hema); background:var(--hema-dim); color:#fff;
+  padding:11px 20px; border-radius:10px; font-weight:700; font-size:14.5px;
+  font-family:'Cairo',sans-serif; transition:.15s;
+}
+.btn:hover{background:var(--hema); box-shadow:0 0 0 3px rgba(138,94,196,.25);}
+.btn.secondary{background:transparent; color:var(--eosin); border-color:var(--eosin-deep);}
+.btn.secondary:hover{background:rgba(226,105,156,.1);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+table.log{width:100%; border-collapse:collapse; font-size:13.5px; margin-top:10px;}
+table.log th, table.log td{padding:8px 10px; border-bottom:1px solid var(--line); text-align:right;}
+table.log th{color:var(--amber); font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:12px;}
+
+/* ---- explain formulas ---- */
+.formula-box{
+  background:rgba(0,0,0,.25); border:1px solid var(--hema-dim);
+  border-radius:12px; padding:16px 18px; font-family:'IBM Plex Mono',monospace;
+  color:var(--amber); font-size:16px; text-align:center; margin:14px 0;
+  direction:ltr;
+}
+.check-q{border-top:1px dashed var(--line); padding-top:18px; margin-top:18px;}
+.check-q p.q{font-weight:700; color:#fff; margin-bottom:10px;}
+.opt-btn{
+  display:block; width:100%; text-align:right; margin-bottom:8px;
+  padding:10px 14px; border-radius:10px; border:1px solid var(--line);
+  background:rgba(255,255,255,.03); color:var(--text); cursor:pointer; font-family:'Cairo',sans-serif;
+}
+.opt-btn:hover{border-color:var(--hema);}
+.opt-btn.correct{background:rgba(111,207,151,.15); border-color:var(--good); color:var(--good);}
+.opt-btn.wrong{background:rgba(235,103,103,.15); border-color:var(--bad); color:var(--bad);}
+.feedback{margin-top:10px; font-size:14px; color:var(--muted); display:none;}
+.feedback.show{display:block;}
+
+/* ---- classify slides ---- */
+.slides-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+@media (max-width:960px){.slides-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:640px){.slides-grid{grid-template-columns:1fr;}}
+.slide-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;}
+.slide-view{width:100%;aspect-ratio:1/1;border-radius:10px;overflow:hidden;border:1px solid var(--hema-dim);background:#000;}
+.slide-view canvas{width:100%;height:100%;display:block;}
+.slide-card .num{font-family:'IBM Plex Mono',monospace;color:var(--amber);font-size:12px;margin-bottom:8px;}
+.feat-list{margin:10px 0;display:flex;flex-direction:column;gap:6px;}
+.feat-list label{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--muted);cursor:pointer;}
+.feat-list input{accent-color:var(--eosin);}
+.slide-result{margin-top:10px;font-size:13px;padding:8px 10px;border-radius:8px;display:none;}
+.slide-result.show{display:block;}
+.slide-result.ok{background:rgba(111,207,151,.12);color:var(--good);}
+.slide-result.no{background:rgba(235,103,103,.12);color:var(--bad);}
+
+/* ---- evaluate ---- */
+.crit-list{list-style:none;padding:0;margin:10px 0;}
+.crit-list li{padding:8px 4px;border-bottom:1px dashed var(--line);font-size:14.5px;color:var(--muted);}
+.crit-list li::before{content:"◆ ";color:var(--eosin);}
+.score-banner{
+  text-align:center;padding:26px;border-radius:14px;
+  background:linear-gradient(135deg, rgba(138,94,196,.18), rgba(226,105,156,.14));
+  border:1px solid var(--hema-dim);
+}
+.score-banner .big{font-family:'IBM Plex Mono',monospace;font-size:44px;color:var(--amber);}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:30px 0;}
+.locked-msg{color:var(--muted);font-size:14px;background:rgba(0,0,0,.2);padding:12px 14px;border-radius:10px;border:1px dashed var(--line);}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow"><span class="dot"></span> معمل مهارات إكلينيكية افتراضي — كلية الطب البشري</span>
+    <h1 class="title">المجهر الضوئي <em>والأنسجة الأساسية</em></h1>
+    <p class="subtitle">تجربة تفاعلية وفق نموذج التعلّم الخماسي (5E) لإتقان استخدام المجهر الضوئي، وتمييز الأنسجة الأربعة الأساسية في الجسم: الظِّهارية، الضامّة، العضلية، والعصبية — دون الحاجة لأي معمل فعلي.</p>
+    <div class="meta-row">
+      <span>⏱️ <b>~45–60 دقيقة</b></span>
+      <span>🎯 <b>الهدف:</b> تفسير خزعة نسيجية غير معروفة بثقة إكلينيكية</span>
+      <span>🔬 <b>الوسيلة:</b> محاكاة مجهر ضوئي بالكامل تعمل داخل المتصفح</span>
+    </div>
+  </div>
+</header>
+
+<nav class="stepper">
+  <div class="stepper-track" id="stepperTrack">
+    <button class="step-btn active" data-stage="0"><span class="num">01 · الإثارة</span> الحالة السريرية</button>
+    <button class="step-btn locked" data-stage="1"><span class="num">02 · الاستكشاف <span class="lockicon">🔒</span></span> محاكاة المجهر</button>
+    <button class="step-btn locked" data-stage="2"><span class="num">03 · الشرح <span class="lockicon">🔒</span></span> فيزياء التكبير</button>
+    <button class="step-btn locked" data-stage="3"><span class="num">04 · التوسّع <span class="lockicon">🔒</span></span> تصنيف الشرائح</button>
+    <button class="step-btn locked" data-stage="4"><span class="num">05 · التقييم <span class="lockicon">🔒</span></span> الخزعة الغامضة</button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- ===================== STAGE 0 : ENGAGE ===================== -->
+<section class="stage active" id="stage0">
+  <div class="stage-head"><span class="stage-tag">STAGE 01 / ENGAGE</span><h2>حالة سريرية تفتح التجربة</h2></div>
+  <p class="stage-desc">اقرأ الحالة، وحاول أن تخمّن أنواع الأنسجة المتوقّع رؤيتها قبل أن تلمس المجهر — سنعود إلى تخمينك في نهاية التجربة لنرى مدى دقّته.</p>
+
+  <div class="card scenario-card">
+    <div class="scenario-icon">🩺</div>
+    <div>
+      <h3>غرفة الباثولوجي — الطابق الثالث</h3>
+      <p>مريضة عمرها <b>45 عامًا</b> راجعت العيادة بكتلة صغيرة في الغدة الدرقية. أُخذت خزعة بالإبرة الدقيقة، وأُرسلت شريحتان للمختبر:</p>
+      <p><b>الشريحة الأولى:</b> من حافة الكتلة (النسيج المحيط الطبيعي).<br><b>الشريحة الثانية:</b> من مركز الكتلة (نسيج غير معروف يحتاج تصنيفًا).</p>
+      <p>قبل أن يفسّر الطبيب المقيم النتيجة المرضية، عليه أن يتقن قراءة الأنسجة الطبيعية الأربعة تحت المجهر — فبدون هذا الأساس، لا يمكن تمييز الشاذّ عن الطبيعي.</p>
+      <div class="tissue-pills">
+        <span class="pill">🧱 ظِهارية Epithelial</span>
+        <span class="pill">🕸️ ضامّة Connective</span>
+        <span class="pill">💪 عضلية Muscular</span>
+        <span class="pill">⚡ عصبية Nervous</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>خمّن أولًا</h3>
+    <p style="color:var(--muted)">أي الأنسجة الأربعة تتوقّع أن تظهر فيها "خطوط عرضية" واضحة تحت المجهر؟ اختر إجابتك — سنراجعها لاحقًا في مرحلة التصنيف.</p>
+    <div id="guessOptions"></div>
+    <p id="guessNote" style="color:var(--muted);font-size:13.5px;display:none;">✓ تم تسجيل تخمينك. انتقل الآن إلى محاكاة المجهر لاختبار الفرضية بنفسك.</p>
+  </div>
+
+  <button class="btn" onclick="goToStage(1)">ابدأ باستكشاف المجهر ⟵</button>
+</section>
+
+<!-- ===================== STAGE 1 : EXPLORE ===================== -->
+<section class="stage" id="stage1">
+  <div class="stage-head"><span class="stage-tag">STAGE 02 / EXPLORE</span><h2>محاكاة المجهر الضوئي</h2></div>
+  <p class="stage-desc">اضبط العدسة الشيئية، البؤرة، موضع المسرح (Stage X/Y)، وشدة الإضاءة، وراقب كيف يتغيّر المشهد. جرّب أنسجة مختلفة بالضغط على "شريحة جديدة".</p>
+
+  <div class="scope-layout">
+    <div class="scope-stand">
+      <div class="eyepiece">
+        <canvas id="scopeCanvas1" width="380" height="380"></canvas>
+        <div class="crosshair"></div>
+        <div class="ring"></div>
+      </div>
+      <div class="readout" id="readout1"></div>
+    </div>
+
+    <div class="controls">
+      <div class="card" style="margin-bottom:0;">
+        <h3>العدسة الشيئية (Objective)</h3>
+        <div class="obj-row" id="objRow1"></div>
+        <div class="toggle-row" style="margin-top:12px;">
+          <input type="checkbox" id="oilToggle1"> <label for="oilToggle1">استخدام زيت الغمر (ضروري عند 100x)</label>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:0;">
+        <div class="control-block">
+          <label>البؤرة (Focus) <span class="val" id="focusVal1">50</span></label>
+          <input type="range" min="0" max="100" value="50" id="focusSlider1">
+        </div>
+        <div class="control-block">
+          <label>مسرح — أفقي (Stage X) <span class="val" id="xVal1">0</span></label>
+          <input type="range" min="-300" max="300" value="0" id="xSlider1">
+        </div>
+        <div class="control-block">
+          <label>مسرح — رأسي (Stage Y) <span class="val" id="yVal1">0</span></label>
+          <input type="range" min="-300" max="300" value="0" id="ySlider1">
+        </div>
+        <div class="control-block">
+          <label>شدّة الإضاءة (Illumination) <span class="val" id="lightVal1">70</span></label>
+          <input type="range" min="10" max="100" value="70" id="lightSlider1">
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:0;">
+        <h3>اختر شريحة للتدريب</h3>
+        <div class="tissue-select">
+          <select id="tissueSelect1">
+            <option value="squamous">ظِهارية حرشفية بسيطة</option>
+            <option value="columnar">ظِهارية عمودية بسيطة</option>
+            <option value="connective">نسيج ضامّ رخو</option>
+            <option value="muscle">عضلة هيكلية</option>
+            <option value="nerve">نسيج عصبي</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+          <button class="btn" onclick="newRandomSlide()">🎲 شريحة عشوائية جديدة</button>
+          <button class="btn secondary" onclick="logCurrentView()">📋 سجّل هذه القراءة</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>سجلّ الملاحظات</h3>
+    <p style="color:var(--muted);font-size:14px;">سجّل قراءاتك لترى بنفسك العلاقة العكسية بين التكبير الكلي ومجال الرؤية.</p>
+    <table class="log" id="logTable">
+      <thead><tr><th>#</th><th>النسيج</th><th>العدسة الشيئية</th><th>التكبير الكلي</th><th>مجال الرؤية (FOV)</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <button class="btn" onclick="goToStage(2)">تابع إلى شرح الفيزياء ⟵</button>
+</section>
+
+<!-- ===================== STAGE 2 : EXPLAIN ===================== -->
+<section class="stage" id="stage2">
+  <div class="stage-head"><span class="stage-tag">STAGE 03 / EXPLAIN</span><h2>فيزياء التكبير ومجال الرؤية</h2></div>
+  <p class="stage-desc">الآن بعد أن جرّبت المجهر عمليًا، دعنا نُرسّخ العلاقات الرياضية التي شاهدتها للتو.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>1) التكبير الكلي</h3>
+      <p style="color:var(--muted)">التكبير الذي تراه فعليًا هو حاصل ضرب تكبير العدسة العينية (عادة ×10) في تكبير العدسة الشيئية المختارة:</p>
+      <div class="formula-box">Total Magnification = Ocular (10×) × Objective</div>
+      <p style="color:var(--muted);font-size:14px;">مثال: عدسة شيئية 40× مع عينية 10× ⇒ تكبير كلي = 400×.</p>
+    </div>
+    <div class="card">
+      <h3>2) مجال الرؤية (Field of View)</h3>
+      <p style="color:var(--muted)">مجال الرؤية هو قطر الدائرة التي تراها فعليًا، ويُحسب بقسمة "رقم الحقل" (Field Number ≈ 20 مم) على تكبير العدسة الشيئية:</p>
+      <div class="formula-box">FOV (mm) = Field Number ÷ Objective</div>
+      <p style="color:var(--muted);font-size:14px;">لاحظ العلاقة العكسية: كلما زاد التكبير، صغُر مجال الرؤية — وهذا بالضبط ما شاهدته أثناء تبديل العدسات في المرحلة السابقة.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>3) لماذا نحتاج زيت الغمر عند 100×؟</h3>
+    <p style="color:var(--muted)">قدرة المجهر على تمييز تفصيلين متقاربين تُعرف بـ"الفتحة العددية" (Numerical Aperture – NA). الهواء بين الشريحة والعدسة يُحني الضوء (ينكسر) فيُفقد جزءًا من التفاصيل الدقيقة عند التكبيرات العالية جدًا. زيت الغمر له معامل انكسار قريب من الزجاج، فيقلّل هذا الانكسار ويرفع الفتحة العددية الفعّالة، مما يحافظ على وضوح التفاصيل تحت 100×.</p>
+  </div>
+
+  <div class="card">
+    <h3>تحقّق من فهمك</h3>
+    <div class="check-q" data-answer="1">
+      <p class="q">1) طالب استخدم عدسة شيئية 10× مع عينية 10×. ما التكبير الكلي؟</p>
+      <button class="opt-btn" data-correct="false">20×</button>
+      <button class="opt-btn" data-correct="true">100×</button>
+      <button class="opt-btn" data-correct="false">10×</button>
+      <div class="feedback"></div>
+    </div>
+    <div class="check-q">
+      <p class="q">2) عند الانتقال من عدسة 10× إلى 40×، ماذا يحدث لمجال الرؤية؟</p>
+      <button class="opt-btn" data-correct="false">يزداد بمقدار 4 أضعاف</button>
+      <button class="opt-btn" data-correct="true">يصغر إلى ربع قيمته تقريبًا</button>
+      <button class="opt-btn" data-correct="false">يبقى ثابتًا دائمًا</button>
+      <div class="feedback"></div>
+    </div>
+    <div class="check-q">
+      <p class="q">3) ما الغرض الأساسي من زيت الغمر عند التكبير 100×؟</p>
+      <button class="opt-btn" data-correct="false">تكبير الصورة أكثر</button>
+      <button class="opt-btn" data-correct="false">تسريع التركيز البؤري</button>
+      <button class="opt-btn" data-correct="true">تقليل انكسار الضوء ورفع الفتحة العددية لتحسين الدقة</button>
+      <div class="feedback"></div>
+    </div>
+  </div>
+
+  <button class="btn" onclick="goToStage(3)">تابع إلى تصنيف الشرائح ⟵</button>
+</section>
+
+<!-- ===================== STAGE 3 : ELABORATE ===================== -->
+<section class="stage" id="stage3">
+  <div class="stage-head"><span class="stage-tag">STAGE 04 / ELABORATE</span><h2>صنّف ست شرائح</h2></div>
+  <p class="stage-desc">افحص كل شريحة، حدّد السمات التي تلاحظها فعليًا من القائمة، ثم اختر نوع النسيج. ستحصل على تغذية راجعة فورية لكل شريحة.</p>
+
+  <div class="slides-grid" id="slidesGrid"></div>
+
+  <div class="card" style="margin-top:22px;">
+    <button class="btn" onclick="gradeAllSlides()">✔️ تحقّق من كل إجاباتي</button>
+    <span id="slidesScoreMsg" style="margin-right:14px;color:var(--muted);font-size:14px;"></span>
+  </div>
+
+  <button class="btn" onclick="goToStage(4)">تابع إلى الخزعة الغامضة ⟵</button>
+</section>
+
+<!-- ===================== STAGE 4 : EVALUATE ===================== -->
+<section class="stage" id="stage4">
+  <div class="stage-head"><span class="stage-tag">STAGE 05 / EVALUATE</span><h2>تحدّي التقييم: الخزعة الغامضة</h2></div>
+  <p class="stage-desc">هذه هي الشريحة الثانية من حالة المريضة في بداية التجربة. عليك فحصها بشكل صحيح، ثم تبرير تصنيفك بثلاث سمات تشخيصية على الأقل.</p>
+
+  <div class="card">
+    <h3>معايير النجاح في هذا التحدّي</h3>
+    <ul class="crit-list">
+      <li>استخدام عدسة شيئية 40× أو أعلى قبل التصنيف.</li>
+      <li>ضبط البؤرة بدقة (الصورة واضحة غير ضبابية).</li>
+      <li>اختيار نوع النسيج الصحيح.</li>
+      <li>تحديد 3 سمات تشخيصية صحيحة على الأقل من القائمة.</li>
+      <li>كتابة تبرير مختصر بأسلوبك الخاص.</li>
+    </ul>
+  </div>
+
+  <div class="scope-layout">
+    <div class="scope-stand">
+      <div class="eyepiece">
+        <canvas id="scopeCanvas2" width="380" height="380"></canvas>
+        <div class="crosshair"></div>
+        <div class="ring"></div>
+      </div>
+      <div class="readout" id="readout2"></div>
+    </div>
+    <div class="controls">
+      <div class="card" style="margin-bottom:0;">
+        <h3>العدسة الشيئية</h3>
+        <div class="obj-row" id="objRow2"></div>
+        <div class="toggle-row" style="margin-top:12px;">
+          <input type="checkbox" id="oilToggle2"> <label for="oilToggle2">زيت الغمر</label>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:0;">
+        <div class="control-block">
+          <label>البؤرة (Focus) <span class="val" id="focusVal2">50</span></label>
+          <input type="range" min="0" max="100" value="50" id="focusSlider2">
+        </div>
+        <div class="control-block">
+          <label>مسرح — أفقي <span class="val" id="xVal2">0</span></label>
+          <input type="range" min="-300" max="300" value="0" id="xSlider2">
+        </div>
+        <div class="control-block">
+          <label>مسرح — رأسي <span class="val" id="yVal2">0</span></label>
+          <input type="range" min="-300" max="300" value="0" id="ySlider2">
+        </div>
+        <div class="control-block">
+          <label>شدّة الإضاءة <span class="val" id="lightVal2">70</span></label>
+          <input type="range" min="10" max="100" value="70" id="lightSlider2">
+        </div>
+      </div>
+      <button class="btn" id="confirmExamBtn" onclick="confirmExam()">🔍 تأكيد وضوح الفحص</button>
+      <p class="locked-msg" id="examLockMsg">استخدم عدسة 40× فأعلى واضبط البؤرة جيدًا لفتح نموذج التصنيف.</p>
+    </div>
+  </div>
+
+  <div class="card" id="classifyForm" style="display:none;">
+    <h3>تصنيفك النهائي</h3>
+    <div class="tissue-select">
+      <select id="finalTissueSelect">
+        <option value="">— اختر نوع النسيج —</option>
+        <option value="squamous">ظِهارية حرشفية بسيطة</option>
+        <option value="columnar">ظِهارية عمودية بسيطة</option>
+        <option value="connective">نسيج ضامّ رخو</option>
+        <option value="muscle">عضلة هيكلية</option>
+        <option value="nerve">نسيج عصبي</option>
+      </select>
+    </div>
+    <p style="margin-top:14px;color:var(--muted);font-size:14px;">حدّد السمات التي تلاحظها فعليًا (اختر 3 على الأقل):</p>
+    <div class="feat-list" id="finalFeatList"></div>
+    <p style="margin-top:10px;color:var(--muted);font-size:14px;">برّر تصنيفك بجملة أو جملتين:</p>
+    <textarea id="finalJustify" rows="3" placeholder="مثال: لاحظت وجود خطوط عرضية منتظمة ونوى محيطية متعددة، وهي سمات مميزة لهذا النسيج..."></textarea>
+    <button class="btn" style="margin-top:14px;" onclick="submitFinalClassification()">إرسال التصنيف النهائي</button>
+    <div class="slide-result" id="finalResult"></div>
+  </div>
+
+  <div class="card" id="quizCard" style="display:none;">
+    <h3>اختبار ختامي — مستويات تصنيف بلوم</h3>
+    <div id="quizContainer"></div>
+    <button class="btn" style="margin-top:10px;" onclick="gradeQuiz()">إنهاء الاختبار وعرض النتيجة</button>
+  </div>
+
+  <div class="card" id="finalScoreCard" style="display:none;">
+    <div class="score-banner">
+      <div style="color:var(--muted);font-size:14px;margin-bottom:6px;">نتيجتك في هذه التجربة</div>
+      <div class="big" id="scoreBig">0%</div>
+      <p id="scoreNote" style="color:var(--muted);margin-top:10px;"></p>
+      <button class="btn secondary" style="margin-top:14px;" onclick="downloadReport()">⬇️ تنزيل تقرير النتيجة (نص)</button>
+    </div>
+  </div>
+</section>
+
+
+<div class="card" id="resourcesBlock" style="margin-top:14px;border-top:2px solid var(--hema-dim);">
+  <h3>🎬 مرجع حقيقي إضافي (مجاني)</h3>
+  <p style="color:var(--muted);">هذا المعمل الافتراضي مخصص للتدريب على المفاهيم والتصنيف، ولا يغني عن رؤية شرائح حقيقية بعين مجهر فعلي. الفيديو التالي مجاني بالكامل، لا يحتاج تسجيل دخول أو اشتراك، وهو من إنتاج أكاديمية خان (Khan Academy) المصمَّم أصلًا للعرض المضمَّن (embed) داخل صفحات الطرف الثالث:</p>
+  <p>
+    <a href="https://www.youtube.com/watch?v=sKins25SEVk" target="_blank" rel="noopener">
+      ▶ Epithelial and Connective Tissue — Khan Academy (يغطي جزءًا من الأنسجة الأساسية بصور مجهرية حقيقية)
+    </a>
+  </p>
+  <p style="color:var(--muted);font-size:13.5px;">للاستزادة: يمكنك أيضًا تصفّح أطلس الشرائح المجاني <a href="https://histologyguide.com/slidebox/slidebox.html" target="_blank" rel="noopener">Histology Guide – Slide Box</a> لمقارنة الرسم التوضيحي في هذا المعمل بصور مجهرية حقيقية مصنّفة.</p>
+  <p style="color:var(--muted);font-size:12.5px;margin-top:12px;border-top:1px dashed var(--line);padding-top:10px;">ملاحظة تقنية: إذا حاولت تضمين (embed) فيديو يوتيوب داخل إطار iframe في منصة أخرى وظهر لك «الخطأ 153»، فهذا يعني أن صاحب الفيديو عطّل خاصية التضمين خارج يوتيوب لذلك الفيديو تحديدًا — وليس خطأً في الرابط نفسه. الحل: افتح الرابط مباشرة في نافذة/تبويب جديد (كما هو مُعدّ في هذه الصفحة)، أو استخدم فيديو مصمَّمًا أصلًا للتضمين مثل فيديو أكاديمية خان أعلاه.</p>
+</div>
+
+</div>
+
+<footer>معمل افتراضي تعليمي — كلية الطب البشري · تجربة المجهر والأنسجة الأساسية · لا يغني عن الممارسة على المجهر الحقيقي</footer>
+
+<script>
+/* ============================================================
+   0. SEEDED RANDOM HELPERS
+============================================================ */
+function cellRand(seed,i,j,k){
+  let x = Math.sin(i*127.1 + j*311.7 + seed*74.7 + (k||0)*13.37)*43758.5453;
+  return x - Math.floor(x);
+}
+function mulberry32(a){
+  return function(){
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+/* ============================================================
+   1. TISSUE DEFINITIONS + DRAW FUNCTIONS
+   world coordinates are tileable; view = {zoom, panX, panY}
+============================================================ */
+const TISSUES = {
+  squamous:{
+    name:"ظِهارية حرشفية بسيطة",
+    en:"Simple Squamous Epithelium",
+    features:["خلايا مفلطحة عريضة","ترتيب في طبقة واحدة رقيقة","نواة مفلطحة مركزية","حدود خلوية متعددة الأضلاع (فسيفسائية)"],
+    cell:38,
+    draw(ctx, seed, x0,y0,x1,y1){
+      ctx.fillStyle="#f6d9e8"; ctx.fillRect(x0,y0,x1-x0,y1-y0);
+      const cs=this.cell;
+      const i0=Math.floor(x0/cs)-1, i1=Math.ceil(x1/cs)+1;
+      const j0=Math.floor(y0/cs)-1, j1=Math.ceil(y1/cs)+1;
+      for(let i=i0;i<=i1;i++){
+        for(let j=j0;j<=j1;j++){
+          const jitterX=(cellRand(seed,i,j,1)-.5)*10;
+          const jitterY=(cellRand(seed,i,j,2)-.5)*10;
+          const cx=i*cs+cs/2+jitterX, cy=j*cs+cs/2+jitterY;
+          const r=cs*0.62;
+          ctx.beginPath();
+          const sides=6;
+          for(let s=0;s<sides;s++){
+            const ang=(s/sides)*Math.PI*2 + cellRand(seed,i,j,3)*0.5;
+            const rr=r*(0.85+cellRand(seed,i,j,10+s)*0.3);
+            const px=cx+Math.cos(ang)*rr, py=cy+Math.sin(ang)*rr;
+            if(s===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+          }
+          ctx.closePath();
+          ctx.fillStyle="rgba(243,206,222,0.9)";
+          ctx.fill();
+          ctx.lineWidth=1.4; ctx.strokeStyle="rgba(122,74,150,0.65)"; ctx.stroke();
+          // flattened central nucleus
+          ctx.save();
+          ctx.translate(cx,cy);
+          ctx.rotate(cellRand(seed,i,j,4)*Math.PI);
+          ctx.scale(1,0.35);
+          ctx.beginPath(); ctx.arc(0,0,r*0.42,0,Math.PI*2);
+          ctx.fillStyle="#5b2f7a"; ctx.fill();
+          ctx.restore();
+        }
+      }
+    }
+  },
+  columnar:{
+    name:"ظِهارية عمودية بسيطة",
+    en:"Simple Columnar Epithelium",
+    features:["خلايا عمودية طويلة الشكل","ترتيب في طبقة واحدة","نواة قاعدية (قرب القاعدة)","حدّ فرشاتي/سطح قمّي واضح"],
+    cellW:26, cellH:78,
+    draw(ctx, seed, x0,y0,x1,y1){
+      ctx.fillStyle="#f2c7dc"; ctx.fillRect(x0,y0,x1-x0,y1-y0);
+      const cw=this.cellW, ch=this.cellH;
+      const i0=Math.floor(x0/cw)-1, i1=Math.ceil(x1/cw)+1;
+      const rowBase = Math.floor(y0/ch)*ch;
+      for(let i=i0;i<=i1;i++){
+        const jitter=(cellRand(seed,i,0,1)-.5)*4;
+        const cx=i*cw+cw/2+jitter;
+        for(let baseY=rowBase-ch; baseY<y1+ch; baseY+=ch){
+          const top=baseY, bottom=baseY+ch*0.94;
+          ctx.beginPath();
+          ctx.roundRect ? ctx.roundRect(cx-cw*0.42, top, cw*0.84, bottom-top, 6) :
+            ctx.rect(cx-cw*0.42, top, cw*0.84, bottom-top);
+          ctx.fillStyle="rgba(246,217,232,0.92)";
+          ctx.fill();
+          ctx.lineWidth=1.3; ctx.strokeStyle="rgba(122,74,150,0.6)"; ctx.stroke();
+          // apical brush border
+          ctx.beginPath();
+          ctx.moveTo(cx-cw*0.4, top+3); ctx.lineTo(cx+cw*0.4, top+3);
+          ctx.lineWidth=2.2; ctx.strokeStyle="rgba(90,50,110,0.8)"; ctx.stroke();
+          // basal nucleus
+          ctx.beginPath();
+          ctx.ellipse(cx, bottom-ch*0.18, cw*0.3, ch*0.13, 0,0,Math.PI*2);
+          ctx.fillStyle="#5b2f7a"; ctx.fill();
+        }
+      }
+    }
+  },
+  connective:{
+    name:"نسيج ضامّ رخو",
+    en:"Loose (Areolar) Connective Tissue",
+    features:["خلايا متناثرة قليلة الكثافة","مسافات بينية واسعة (مطرس خارج خلوي)","ألياف متموّجة (كولاجين)","نواة مغزلية الشكل (خلايا ليفية)"],
+    cell:70,
+    draw(ctx, seed, x0,y0,x1,y1){
+      ctx.fillStyle="#f7dfe9"; ctx.fillRect(x0,y0,x1-x0,y1-y0);
+      const cs=this.cell;
+      const i0=Math.floor(x0/cs)-1, i1=Math.ceil(x1/cs)+1;
+      const j0=Math.floor(y0/cs)-1, j1=Math.ceil(y1/cs)+1;
+      // wavy collagen fibers
+      ctx.lineWidth=2;
+      for(let i=i0;i<=i1;i++){
+        for(let j=j0;j<=j1;j++){
+          if(cellRand(seed,i,j,5) < 0.75){
+            const sx=i*cs+cellRand(seed,i,j,6)*cs, sy=j*cs+cellRand(seed,i,j,7)*cs;
+            const ang=cellRand(seed,i,j,8)*Math.PI*2;
+            const len=cs*1.6;
+            const midX=sx+Math.cos(ang)*len*0.5+ (cellRand(seed,i,j,9)-.5)*40;
+            const midY=sy+Math.sin(ang)*len*0.5+ (cellRand(seed,i,j,11)-.5)*40;
+            const endX=sx+Math.cos(ang)*len, endY=sy+Math.sin(ang)*len;
+            ctx.beginPath();
+            ctx.moveTo(sx,sy);
+            ctx.quadraticCurveTo(midX,midY,endX,endY);
+            ctx.strokeStyle="rgba(214,140,175,0.55)";
+            ctx.stroke();
+          }
+        }
+      }
+      // sparse fibroblasts
+      for(let i=i0;i<=i1;i++){
+        for(let j=j0;j<=j1;j++){
+          if(cellRand(seed,i,j,20) < 0.28){
+            const cx=i*cs+cellRand(seed,i,j,21)*cs, cy=j*cs+cellRand(seed,i,j,22)*cs;
+            const ang=cellRand(seed,i,j,23)*Math.PI;
+            ctx.save();
+            ctx.translate(cx,cy); ctx.rotate(ang); ctx.scale(1,0.3);
+            ctx.beginPath(); ctx.arc(0,0,14,0,Math.PI*2);
+            ctx.fillStyle="#6a3a85"; ctx.fill();
+            ctx.restore();
+          }
+        }
+      }
+    }
+  },
+  muscle:{
+    name:"عضلة هيكلية",
+    en:"Skeletal Muscle Tissue",
+    features:["ألياف طويلة مستطيلة الشكل","خطوط عرضية (Striations) واضحة ومنتظمة","نواة محيطية متعددة لكل ليف","لا يوجد تفرّع بين الألياف"],
+    bandH:52,
+    draw(ctx, seed, x0,y0,x1,y1){
+      ctx.fillStyle="#f3d0c6"; ctx.fillRect(x0,y0,x1-x0,y1-y0);
+      const bh=this.bandH;
+      const j0=Math.floor(y0/bh)-1, j1=Math.ceil(y1/bh)+1;
+      for(let j=j0;j<=j1;j++){
+        const top=j*bh, bot=top+bh*0.86;
+        ctx.fillStyle="rgba(240,190,175,0.85)";
+        ctx.fillRect(x0-40,top,(x1-x0)+80,bot-top);
+        ctx.strokeStyle="rgba(140,80,70,0.55)"; ctx.lineWidth=1.5;
+        ctx.strokeRect(x0-40,top,(x1-x0)+80,bot-top);
+        // striations
+        ctx.strokeStyle="rgba(110,55,95,0.55)"; ctx.lineWidth=1.2;
+        for(let sx=Math.floor(x0/7)*7; sx<x1+7; sx+=7){
+          ctx.beginPath(); ctx.moveTo(sx,top+3); ctx.lineTo(sx,bot-3); ctx.stroke();
+        }
+        // peripheral nuclei
+        for(let i=Math.floor(x0/40)-1;i<=Math.ceil(x1/40)+1;i++){
+          if(cellRand(seed,i,j,30) < 0.55){
+            const nx=i*40+cellRand(seed,i,j,31)*30;
+            const ny= cellRand(seed,i,j,32)<0.5 ? top+7 : bot-7;
+            ctx.beginPath(); ctx.ellipse(nx,ny,7,3.4,0,0,Math.PI*2);
+            ctx.fillStyle="#4a2760"; ctx.fill();
+          }
+        }
+      }
+    }
+  },
+  nerve:{
+    name:"نسيج عصبي",
+    en:"Nervous Tissue",
+    features:["أجسام خلوية كبيرة مستديرة (عصبونات)","نواة كبيرة واضحة النويّة","تشعّبات (دندريتات) واضحة","خلفية شبكية ناعمة (Neuropil)"],
+    cell:140,
+    draw(ctx, seed, x0,y0,x1,y1){
+      ctx.fillStyle="#f6dce8"; ctx.fillRect(x0,y0,x1-x0,y1-y0);
+      // texture dots (neuropil + glia)
+      for(let k=0;k<180;k++){
+        const rx = x0 + cellRand(seed,k,7,1)*(x1-x0);
+        const ry = y0 + cellRand(seed,k,7,2)*(y1-y0);
+        ctx.beginPath(); ctx.arc(rx,ry,1.4,0,Math.PI*2);
+        ctx.fillStyle="rgba(150,90,140,0.35)"; ctx.fill();
+      }
+      const cs=this.cell;
+      const i0=Math.floor(x0/cs)-1, i1=Math.ceil(x1/cs)+1;
+      const j0=Math.floor(y0/cs)-1, j1=Math.ceil(y1/cs)+1;
+      for(let i=i0;i<=i1;i++){
+        for(let j=j0;j<=j1;j++){
+          if(cellRand(seed,i,j,40) < 0.45){
+            const cx=i*cs+cs/2+(cellRand(seed,i,j,41)-.5)*40;
+            const cy=j*cs+cs/2+(cellRand(seed,i,j,42)-.5)*40;
+            const r=26;
+            // dendrites
+            const nBranch=3+Math.floor(cellRand(seed,i,j,43)*3);
+            for(let b=0;b<nBranch;b++){
+              const ang=(b/nBranch)*Math.PI*2 + cellRand(seed,i,j,44+b)*0.8;
+              const len=40+cellRand(seed,i,j,50+b)*35;
+              const ex=cx+Math.cos(ang)*len, ey=cy+Math.sin(ang)*len;
+              const mx=cx+Math.cos(ang)*len*0.5+(cellRand(seed,i,j,60+b)-.5)*20;
+              const my=cy+Math.sin(ang)*len*0.5+(cellRand(seed,i,j,61+b)-.5)*20;
+              ctx.beginPath(); ctx.moveTo(cx,cy);
+              ctx.quadraticCurveTo(mx,my,ex,ey);
+              ctx.strokeStyle="rgba(90,45,110,0.7)"; ctx.lineWidth=2.2; ctx.stroke();
+            }
+            // soma
+            ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+            ctx.fillStyle="#e7b8d3"; ctx.fill();
+            ctx.strokeStyle="rgba(90,45,110,0.8)"; ctx.lineWidth=1.6; ctx.stroke();
+            // nucleus + nucleolus
+            ctx.beginPath(); ctx.arc(cx,cy,r*0.45,0,Math.PI*2);
+            ctx.fillStyle="#6a3a85"; ctx.fill();
+            ctx.beginPath(); ctx.arc(cx+2,cy-2,3,0,Math.PI*2);
+            ctx.fillStyle="#2c1633"; ctx.fill();
+          }
+        }
+      }
+    }
+  }
+};
+const TISSUE_KEYS=Object.keys(TISSUES);
+
+/* ============================================================
+   2. MICROSCOPE ENGINE (reusable for two viewports)
+============================================================ */
+function makeScope(canvasId){
+  const canvas=document.getElementById(canvasId);
+  const ctx=canvas.getContext('2d');
+  return {
+    canvas, ctx,
+    tissue:'squamous', seed:Math.floor(Math.random()*99999),
+    objective:10, focus:50, bestFocus: 45+Math.floor(Math.random()*10),
+    x:0, y:0, light:70, oil:false,
+    render(){
+      const {ctx,canvas}=this;
+      const w=canvas.width, h=canvas.height;
+      ctx.save();
+      ctx.clearRect(0,0,w,h);
+      ctx.beginPath(); ctx.arc(w/2,h/2,w/2,0,Math.PI*2); ctx.clip();
+      // world scale: base FOV at 4x spans WORLD units
+      const WORLD=760;
+      const visibleField = WORLD * (4/this.objective);
+      const zoom = w/visibleField;
+      // focus blur
+      let blurAmt = Math.abs(this.focus - this.bestFocus)/6;
+      if(this.objective>=100 && !this.oil) blurAmt += 3.2; // needs oil
+      blurAmt = Math.min(blurAmt, 14);
+      const brightness = 55 + this.light*0.8;
+      ctx.filter = `blur(${blurAmt}px) brightness(${brightness}%) saturate(${90+this.light*0.3}%)`;
+      ctx.translate(w/2,h/2);
+      ctx.scale(zoom,zoom);
+      ctx.translate(-this.x,-this.y);
+      const half = visibleField/1.6;
+      TISSUES[this.tissue].draw(ctx, this.seed, this.x-half, this.y-half, this.x+half, this.y+half);
+      ctx.restore();
+      // light vignette overlay strength
+      ctx.save();
+      ctx.globalAlpha = Math.max(0,(60-this.light)/140);
+      ctx.fillStyle="#000";
+      ctx.beginPath(); ctx.arc(w/2,h/2,w/2,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    },
+    totalMag(){return 10*this.objective;},
+    fov(){return (20/this.objective).toFixed(2);}
+  };
+}
+const scope1=makeScope('scopeCanvas1');
+const scope2=makeScope('scopeCanvas2');
+
+const OBJECTIVES=[4,10,40,100];
+function buildObjRow(rowId, scope, onchange){
+  const row=document.getElementById(rowId);
+  row.innerHTML='';
+  OBJECTIVES.forEach(o=>{
+    const b=document.createElement('button');
+    b.className='obj-btn'+(scope.objective===o?' active':'');
+    b.textContent=o+'×';
+    b.onclick=()=>{
+      scope.objective=o;
+      [...row.children].forEach(c=>c.classList.remove('active'));
+      b.classList.add('active');
+      onchange && onchange();
+      scope.render();
+    };
+    row.appendChild(b);
+  });
+}
+
+function updateReadout(scope, elId){
+  const el=document.getElementById(elId);
+  el.innerHTML = `
+    <div>التكبير الكلي</div><div><b class="mono">${scope.totalMag()}×</b></div>
+    <div>مجال الرؤية (FOV)</div><div><b class="mono">${scope.fov()} mm</b></div>
+    <div>الشريحة الحالية</div><div style="color:#fff">${TISSUES[scope.tissue].name}</div>
+    <div>البؤرة</div><div class="mono">${scope.focus}</div>
+  `;
+}
+
+/* ---- Scope 1 wiring (Explore stage) ---- */
+buildObjRow('objRow1', scope1, ()=>{updateReadout(scope1,'readout1');});
+document.getElementById('tissueSelect1').addEventListener('change', e=>{
+  scope1.tissue=e.target.value; scope1.seed=Math.floor(Math.random()*99999);
+  scope1.bestFocus=45+Math.floor(Math.random()*10);
+  scope1.render(); updateReadout(scope1,'readout1');
+});
+function wireSlider(id,scope,prop,valId,cb){
+  const el=document.getElementById(id);
+  el.addEventListener('input',()=>{
+    scope[prop]=+el.value;
+    document.getElementById(valId).textContent=el.value;
+    scope.render();
+    cb && cb();
+  });
+}
+wireSlider('focusSlider1',scope1,'focus','focusVal1',()=>updateReadout(scope1,'readout1'));
+wireSlider('xSlider1',scope1,'x','xVal1');
+wireSlider('ySlider1',scope1,'y','yVal1');
+wireSlider('lightSlider1',scope1,'light','lightVal1');
+document.getElementById('oilToggle1').addEventListener('change',e=>{scope1.oil=e.target.checked; scope1.render();});
+
+function newRandomSlide(){
+  const key=TISSUE_KEYS[Math.floor(Math.random()*TISSUE_KEYS.length)];
+  scope1.tissue=key; scope1.seed=Math.floor(Math.random()*99999);
+  scope1.bestFocus=45+Math.floor(Math.random()*10);
+  document.getElementById('tissueSelect1').value=key;
+  scope1.render(); updateReadout(scope1,'readout1');
+}
+
+let logCount=0;
+function logCurrentView(){
+  logCount++;
+  const tbody=document.querySelector('#logTable tbody');
+  const tr=document.createElement('tr');
+  tr.innerHTML = `<td class="mono">${logCount}</td><td>${TISSUES[scope1.tissue].name}</td>
+    <td class="mono">${scope1.objective}×</td><td class="mono">${scope1.totalMag()}×</td>
+    <td class="mono">${scope1.fov()} mm</td>`;
+  tbody.appendChild(tr);
+  unlockStage(2);
+}
+
+scope1.render(); updateReadout(scope1,'readout1');
+
+/* ============================================================
+   3. STAGE / STEPPER NAVIGATION (with progression gating)
+============================================================ */
+const stages=[...document.querySelectorAll('section.stage')];
+const stepBtns=[...document.querySelectorAll('.step-btn')];
+const unlocked=[true,false,false,false,false]; // stage 0 always open
+
+function unlockStage(idx){
+  if(idx<0 || idx>=unlocked.length || unlocked[idx]) return;
+  unlocked[idx]=true;
+  const btn=stepBtns[idx];
+  btn.classList.remove('locked');
+  const icon=btn.querySelector('.lockicon');
+  if(icon) icon.remove();
+}
+
+function goToStage(idx){
+  if(!unlocked[idx]){
+    flashLockedNotice(idx);
+    return;
+  }
+  stages.forEach((s,i)=>s.classList.toggle('active',i===idx));
+  stepBtns.forEach((b,i)=>b.classList.toggle('active',i===idx));
+  window.scrollTo({top: document.querySelector('.stepper').offsetTop, behavior:'smooth'});
+  if(idx===1){scope1.render();}
+  if(idx===4){scope2.render();}
+}
+function flashLockedNotice(idx){
+  const names=["الإثارة","الاستكشاف","الشرح","التوسّع","التقييم"];
+  const btn=stepBtns[idx];
+  btn.animate([{opacity:1},{opacity:.3},{opacity:1}],{duration:400,iterations:2});
+  alert("أكمل متطلبات المرحلة الحالية أولًا لفتح مرحلة «"+names[idx]+"».");
+}
+stepBtns.forEach((b,i)=>b.addEventListener('click',()=>goToStage(i)));
+
+/* ============================================================
+   4. ENGAGE STAGE — guess question
+============================================================ */
+const guessOptions=document.getElementById('guessOptions');
+const guessChoices=[
+  {t:"الظِّهارية",correct:false},
+  {t:"الضامّة",correct:false},
+  {t:"العضلية",correct:true},
+  {t:"العصبية",correct:false}
+];
+guessChoices.forEach(c=>{
+  const b=document.createElement('button');
+  b.className='opt-btn'; b.textContent=c.t;
+  b.onclick=()=>{
+    [...guessOptions.children].forEach(x=>x.classList.remove('correct','wrong'));
+    b.classList.add(c.correct?'correct':'wrong');
+    document.getElementById('guessNote').style.display='block';
+    unlockStage(1);
+  };
+  guessOptions.appendChild(b);
+});
+
+/* ============================================================
+   5. EXPLAIN STAGE — check questions
+============================================================ */
+const explainQuestions=[...document.querySelectorAll('#stage2 .check-q')];
+const explainAnswered=new Set();
+explainQuestions.forEach((q,qi)=>{
+  const btns=q.querySelectorAll('.opt-btn');
+  const fb=q.querySelector('.feedback');
+  btns.forEach(b=>{
+    b.addEventListener('click',()=>{
+      btns.forEach(x=>x.classList.remove('correct','wrong'));
+      const isCorrect=b.dataset.correct==='true';
+      b.classList.add(isCorrect?'correct':'wrong');
+      if(!isCorrect){
+        const correctBtn=[...btns].find(x=>x.dataset.correct==='true');
+        correctBtn.classList.add('correct');
+      }
+      fb.textContent = isCorrect ? "✔ إجابة صحيحة." : "✘ ليست الإجابة الصحيحة — لاحظ التظليل الأخضر للإجابة الصائبة.";
+      fb.classList.add('show');
+      explainAnswered.add(qi);
+      if(explainAnswered.size>=explainQuestions.length) unlockStage(3);
+    });
+  });
+});
+
+/* ============================================================
+   6. ELABORATE STAGE — 6 classification slides
+============================================================ */
+const FEATURE_POOL = [
+  "خلايا مفلطحة عريضة","خلايا عمودية طويلة الشكل","خلايا متناثرة قليلة الكثافة",
+  "خطوط عرضية (Striations) واضحة","أجسام خلوية كبيرة مستديرة","نواة قاعدية (قرب القاعدة)",
+  "نواة محيطية متعددة","ألياف متموّجة (كولاجين)","تشعّبات (دندريتات) واضحة","حدّ فرشاتي/سطح قمّي واضح"
+];
+const slideOrder=['squamous','columnar','muscle','connective','nerve','squamous'];
+const slideStates=[];
+
+function buildSlidesGrid(){
+  const grid=document.getElementById('slidesGrid');
+  slideOrder.forEach((key,idx)=>{
+    const seed=1000+idx*77+Math.floor(Math.random()*50);
+    const wrap=document.createElement('div'); wrap.className='slide-card';
+    const canvasId='slideCanvas'+idx;
+    // pick 4 candidate features: correct ones (up to 3) + distractors, shuffled
+    const correctFeats = TISSUES[key].features.slice(0,3);
+    const distractors = FEATURE_POOL.filter(f=>!correctFeats.includes(f));
+    const shuffledDistr = distractors.sort(()=>Math.random()-0.5).slice(0,2);
+    const options = [...correctFeats, ...shuffledDistr].sort(()=>Math.random()-0.5);
+
+    wrap.innerHTML = `
+      <div class="num">شريحة رقم ${idx+1}</div>
+      <div class="slide-view"><canvas id="${canvasId}" width="220" height="220"></canvas></div>
+      <div class="feat-list">
+        ${options.map((f,fi)=>`<label><input type="checkbox" data-feat="${f}" data-slide="${idx}"> ${f}</label>`).join('')}
+      </div>
+      <select data-guess="${idx}">
+        <option value="">— نوع النسيج —</option>
+        <option value="squamous">ظِهارية حرشفية بسيطة</option>
+        <option value="columnar">ظِهارية عمودية بسيطة</option>
+        <option value="connective">نسيج ضامّ رخو</option>
+        <option value="muscle">عضلة هيكلية</option>
+        <option value="nerve">نسيج عصبي</option>
+      </select>
+      <div class="slide-result" id="slideResult${idx}"></div>
+    `;
+    grid.appendChild(wrap);
+    slideStates.push({key, seed, correctFeats, idx});
+  });
+  // draw each canvas
+  requestAnimationFrame(()=>{
+    slideStates.forEach(st=>{
+      const c=document.getElementById('slideCanvas'+st.idx);
+      const ctx=c.getContext('2d');
+      ctx.beginPath(); ctx.arc(110,110,110,0,Math.PI*2); ctx.clip();
+      ctx.filter="brightness(105%)";
+      TISSUES[st.key].draw(ctx, st.seed, -40,-40,260,260);
+    });
+  });
+}
+buildSlidesGrid();
+
+function gradeAllSlides(){
+  let correctCount=0;
+  slideStates.forEach(st=>{
+    const guessSel=document.querySelector(`select[data-guess="${st.idx}"]`);
+    const guess=guessSel.value;
+    const checked=[...document.querySelectorAll(`input[data-slide="${st.idx}"]:checked`)].map(i=>i.dataset.feat);
+    const correctFeatChecked = checked.filter(f=>st.correctFeats.includes(f)).length;
+    const wrongFeatChecked = checked.filter(f=>!st.correctFeats.includes(f)).length;
+    const tissueOk = guess===st.key;
+    const good = tissueOk && correctFeatChecked>=2 && wrongFeatChecked===0;
+    if(good) correctCount++;
+    const box=document.getElementById('slideResult'+st.idx);
+    box.classList.add('show');
+    box.classList.toggle('ok',good);
+    box.classList.toggle('no',!good);
+    if(!guess){
+      box.textContent="اختر نوع النسيج أولًا.";
+      box.classList.remove('ok'); box.classList.add('no');
+    } else {
+      box.textContent = (tissueOk?`✔ التصنيف صحيح: ${TISSUES[st.key].name}. `:`✘ التصنيف الصحيح هو: ${TISSUES[st.key].name}. `) +
+        (wrongFeatChecked>0 ? `لاحظ أنك اخترت سمة لا تنتمي لهذا النسيج. ` : '') +
+        (correctFeatChecked<2 ? `حاول اختيار المزيد من السمات المميزة الفعلية.` : `أحسنت في اختيار السمات المميزة.`);
+    }
+  });
+  document.getElementById('slidesScoreMsg').textContent = `النتيجة: ${correctCount} من ${slideStates.length} شرائح مصنّفة بدقة.`;
+  unlockStage(4);
+}
+
+/* ============================================================
+   7. EVALUATE STAGE — mystery slide
+============================================================ */
+const mysteryKey = TISSUE_KEYS[Math.floor(Math.random()*TISSUE_KEYS.length)];
+scope2.tissue=mysteryKey;
+scope2.seed=Math.floor(Math.random()*99999);
+scope2.bestFocus=45+Math.floor(Math.random()*10);
+
+buildObjRow('objRow2', scope2, ()=>{updateReadout(scope2,'readout2'); checkExamReady();});
+wireSlider('focusSlider2',scope2,'focus','focusVal2',()=>{updateReadout(scope2,'readout2'); checkExamReady();});
+wireSlider('xSlider2',scope2,'x','xVal2');
+wireSlider('ySlider2',scope2,'y','yVal2');
+wireSlider('lightSlider2',scope2,'light','lightVal2');
+document.getElementById('oilToggle2').addEventListener('change',e=>{scope2.oil=e.target.checked; scope2.render();});
+scope2.render(); updateReadout(scope2,'readout2');
+// hide tissue name in readout2 for mystery
+function updateReadoutMystery(){
+  const el=document.getElementById('readout2');
+  el.innerHTML = `
+    <div>التكبير الكلي</div><div><b class="mono">${scope2.totalMag()}×</b></div>
+    <div>مجال الرؤية (FOV)</div><div><b class="mono">${scope2.fov()} mm</b></div>
+    <div>الشريحة</div><div style="color:#fff">عيّنة الخزعة (غير معروفة)</div>
+    <div>البؤرة</div><div class="mono">${scope2.focus}</div>
+  `;
+}
+updateReadoutMystery();
+['objRow2'].forEach(()=>{}); // noop
+document.getElementById('focusSlider2').addEventListener('input',updateReadoutMystery);
+document.getElementById('objRow2').addEventListener('click',updateReadoutMystery);
+
+function checkExamReady(){
+  const focusOk = Math.abs(scope2.focus - scope2.bestFocus) < 6;
+  const objOk = scope2.objective>=40;
+  const oilOk = scope2.objective<100 || scope2.oil;
+  document.getElementById('confirmExamBtn').disabled = !(focusOk && objOk && oilOk);
+}
+checkExamReady();
+
+function confirmExam(){
+  const focusOk = Math.abs(scope2.focus - scope2.bestFocus) < 6;
+  const objOk = scope2.objective>=40;
+  if(!focusOk || !objOk){
+    alert("تأكد من استخدام عدسة 40× فأعلى وضبط البؤرة بدقة أولًا.");
+    return;
+  }
+  document.getElementById('examLockMsg').style.display='none';
+  document.getElementById('classifyForm').style.display='block';
+  buildFinalFeatList();
+  document.getElementById('classifyForm').scrollIntoView({behavior:'smooth'});
+}
+
+function buildFinalFeatList(){
+  const correctFeats = TISSUES[mysteryKey].features;
+  const distractors = FEATURE_POOL.filter(f=>!correctFeats.includes(f)).sort(()=>Math.random()-0.5).slice(0,4);
+  const options=[...correctFeats, ...distractors].sort(()=>Math.random()-0.5);
+  const box=document.getElementById('finalFeatList');
+  box.innerHTML = options.map(f=>`<label><input type="checkbox" data-ffeat="${f}"> ${f}</label>`).join('');
+}
+
+let finalClassifyCorrect=false;
+function submitFinalClassification(){
+  const guess=document.getElementById('finalTissueSelect').value;
+  const justify=document.getElementById('finalJustify').value.trim();
+  const checked=[...document.querySelectorAll('input[data-ffeat]:checked')].map(i=>i.dataset.ffeat);
+  const correctFeats=TISSUES[mysteryKey].features;
+  const correctChecked=checked.filter(f=>correctFeats.includes(f)).length;
+  const wrongChecked=checked.filter(f=>!correctFeats.includes(f)).length;
+  const tissueOk = guess===mysteryKey;
+  finalClassifyCorrect = tissueOk && correctChecked>=3 && wrongChecked===0 && justify.length>10;
+
+  const box=document.getElementById('finalResult');
+  box.classList.add('show');
+  box.classList.toggle('ok',finalClassifyCorrect);
+  box.classList.toggle('no',!finalClassifyCorrect);
+  let msg='';
+  if(!guess) msg="اختر نوع النسيج أولًا.";
+  else {
+    msg = tissueOk ? `✔ تصنيف صحيح: ${TISSUES[mysteryKey].name}. ` : `✘ غير دقيق — النسيج الفعلي هو ${TISSUES[mysteryKey].name}. `;
+    msg += correctChecked<3 ? `تحتاج لاختيار 3 سمات تشخيصية صحيحة على الأقل (اخترت ${correctChecked}). ` : `أحسنت في اختيار السمات (${correctChecked} سمة صحيحة). `;
+    if(wrongChecked>0) msg += `لاحظ أنك اخترت ${wrongChecked} سمة لا تنتمي لهذا النسيج. `;
+    if(justify.length<=10) msg += `أضف تبريرًا أوضح بجملة كاملة.`;
+  }
+  box.textContent=msg;
+
+  document.getElementById('quizCard').style.display='block';
+  if(!document.getElementById('quizContainer').dataset.built) buildQuiz();
+  document.getElementById('quizCard').scrollIntoView({behavior:'smooth'});
+}
+
+/* ---- Bloom's taxonomy quiz — pool of 3 questions per level, 1 picked at random each attempt ---- */
+const QUIZ_POOL={
+  "تذكّر":[
+    {q:"عند استخدام عدسة شيئية 40× مع عينية 10×، ما التكبير الكلي؟",
+     opts:["4×","40×","400×","10×"], correct:2},
+    {q:"ما تكبير العدسة العينية القياسي في معظم المجاهر الضوئية؟",
+     opts:["4×","10×","40×","100×"], correct:1},
+    {q:"ما اسم العدسة التي تحتاج زيت غمر عادة لتحقيق أفضل دقة؟",
+     opts:["4×","10×","40×","100×"], correct:3}
+  ],
+  "فهم":[
+    {q:"لماذا يصغر مجال الرؤية كلما زاد التكبير؟",
+     opts:["لأن العدسة العينية تتغيّر","لأن نفس مساحة الضوء الداخلة تتوزّع على تكبير أكبر فتظهر منطقة أصغر","لأن الشريحة تتحرك تلقائيًا","لا علاقة للتكبير بمجال الرؤية"], correct:1},
+    {q:"ما المقصود عمليًا بأن التكبير الكلي هو حاصل ضرب العدسة العينية في الشيئية؟",
+     opts:["أن كل عدسة تكبّر بشكل مستقل ثم تتضاعف تأثيراتهما معًا","أن العدسة العينية لا تؤثر على التكبير النهائي","أن العدسة الشيئية وحدها تحدد التكبير الكلي","أن التكبير الكلي ثابت بغض النظر عن العدسة المستخدمة"], correct:0},
+    {q:"لماذا نبدأ فحص أي شريحة جديدة بأقل تكبير (4×) وليس بتكبير عالٍ؟",
+     opts:["لأن العدسات العالية ممنوعة في البداية","لتوسيع مجال الرؤية والحصول على نظرة عامة قبل التركيز على منطقة محددة","لأن التكبير العالي يُتلف الشريحة","لا يوجد سبب علمي، هو مجرد عرف تقليدي"], correct:1}
+  ],
+  "تطبيق":[
+    {q:"إذا كان رقم الحقل 20 مم والعدسة الشيئية 40×، فما مجال الرؤية التقريبي؟",
+     opts:["2 مم","0.5 مم","5 مم","20 مم"], correct:1},
+    {q:"إذا كان رقم الحقل 20 مم والعدسة الشيئية 4×، فما مجال الرؤية التقريبي؟",
+     opts:["0.2 مم","2 مم","5 مم","80 مم"], correct:2},
+    {q:"طالب يستخدم عدسة شيئية 10× مع عينية 10×، ثم بدّل إلى عدسة 40× بنفس العينية. كم أصبح التكبير الكلي الجديد؟",
+     opts:["100×","200×","400×","40×"], correct:2}
+  ],
+  "تحليل":[
+    {q:"شريحة تُظهر ألياف طويلة بها خطوط عرضية منتظمة ونوى محيطية متعددة. ما النسيج الأرجح؟",
+     opts:["ظِهارية عمودية","نسيج ضامّ رخو","عضلة هيكلية","نسيج عصبي"], correct:2},
+    {q:"شريحة تُظهر خلايا متناثرة ومسافات بينية واسعة مع ألياف كولاجين متموّجة. ما النسيج الأرجح؟",
+     opts:["ظِهارية حرشفية","نسيج ضامّ رخو","عضلة هيكلية","نسيج عصبي"], correct:1},
+    {q:"شريحة تُظهر أجسامًا خلوية كبيرة مستديرة بنواة واضحة النويّة وتشعبات متفرّعة. ما النسيج الأرجح؟",
+     opts:["ظِهارية عمودية","نسيج ضامّ رخو","عضلة هيكلية","نسيج عصبي"], correct:3}
+  ],
+  "تقييم":[
+    {q:"لماذا نحتاج زيت الغمر تحديدًا عند 100× وليس عند 40×؟",
+     opts:["لأن 100× تحتاج فتحة عددية أعلى لتقليل انكسار الضوء والحفاظ على الدقة","لأن الزيت يكبّر الصورة أكثر","لأن الزيت يُبرّد العدسة","لأن الشريحة تحترق دون الزيت عند 100×"], correct:0},
+    {q:"طالب صنّف شريحة كنسيج ضامّ رخو معتمدًا فقط على وجود نوًى بيضاوية متفرقة، متجاهلًا غياب الألياف المتموّجة تمامًا. ما أفضل نقد لهذا الاستنتاج؟",
+     opts:["الاستنتاج سليم لأن النوى المتفرقة كافية وحدها للتصنيف","الاستنتاج ضعيف لأنه اعتمد على سمة واحدة وتجاهل غياب سمة أساسية أخرى للنسيج الضامّ","الاستنتاج ضعيف لأن النسيج الضامّ لا يحتوي نوًى أصلًا","لا يمكن الحكم دون معرفة لون الصبغة"], correct:1},
+    {q:"لماذا يُعدّ الفحص بتكبير منخفض (4×) خطوة تقييمية مهمة قبل الانتقال لتكبير عالٍ عند تفسير خزعة غير معروفة؟",
+     opts:["لأنه يمنح صورة عامة عن توزيع الأنسجة يصعب الحصول عليها بتكبير عالٍ محصور المجال","لأنه غير ضروري ويمكن تجاوزه دائمًا","لأن التكبير العالي يُظهر كل شيء يُظهره التكبير المنخفض وزيادة","لأن قواعد المختبر تفرض ذلك فقط شكليًا"], correct:0}
+  ]
+};
+let QUIZ=[];
+let quizScore=0;
+function buildQuiz(){
+  const c=document.getElementById('quizContainer');
+  c.dataset.built='1';
+  QUIZ = Object.keys(QUIZ_POOL).map(level=>{
+    const pool=QUIZ_POOL[level];
+    const pick=pool[Math.floor(Math.random()*pool.length)];
+    return {level, ...pick};
+  });
+  QUIZ.forEach((item,qi)=>{
+    const div=document.createElement('div'); div.className='check-q';
+    div.innerHTML = `<p class="q"><span class="badge">${item.level}</span> ${qi+1}) ${item.q}</p>` +
+      item.opts.map((o,oi)=>`<button class="opt-btn" data-qi="${qi}" data-oi="${oi}">${o}</button>`).join('') +
+      `<div class="feedback"></div>`;
+    c.appendChild(div);
+  });
+  c.querySelectorAll('.opt-btn').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const qi=+b.dataset.qi, oi=+b.dataset.oi;
+      const group=c.querySelectorAll(`.opt-btn[data-qi="${qi}"]`);
+      if(b.dataset.locked) return;
+      group.forEach(x=>x.dataset.locked='1');
+      const isCorrect = oi===QUIZ[qi].correct;
+      if(isCorrect) quizScore++;
+      group.forEach(x=>{
+        if(+x.dataset.oi===QUIZ[qi].correct) x.classList.add('correct');
+        else if(x===b) x.classList.add('wrong');
+      });
+      const fb=b.parentElement.querySelector('.feedback');
+      fb.textContent = isCorrect ? "✔ صحيح." : "✘ غير صحيح — الإجابة الصائبة مظللة بالأخضر.";
+      fb.classList.add('show');
+    });
+  });
+}
+
+function gradeQuiz(){
+  const total=QUIZ.length;
+  const classifyPts = finalClassifyCorrect ? 1 : 0;
+  const overall = Math.round(((quizScore + classifyPts) / (total+1)) * 100);
+  document.getElementById('finalScoreCard').style.display='block';
+  document.getElementById('scoreBig').textContent = overall+'%';
+  let note='';
+  if(overall>=80) note="أداء ممتاز! أنت جاهز لتفسير خزعات نسيجية حقيقية بثقة.";
+  else if(overall>=50) note="أداء جيد — راجع مرحلة الشرح (فيزياء التكبير) ومرحلة تصنيف الشرائح لتعزيز نقاط الضعف.";
+  else note="يُنصح بمراجعة التجربة من مرحلة الاستكشاف مجددًا قبل التقدّم لتحديات إكلينيكية أصعب.";
+  document.getElementById('scoreNote').textContent = note + ` (${quizScore}/${total} في الاختبار، والتصنيف النهائي: ${finalClassifyCorrect?'صحيح':'غير مكتمل/غير دقيق'})`;
+  document.getElementById('finalScoreCard').scrollIntoView({behavior:'smooth'});
+}
+
+/* ---- Downloadable text report (no server, no browser storage — just a client-side file) ---- */
+function downloadReport(){
+  const total=QUIZ.length;
+  const overall=document.getElementById('scoreBig').textContent;
+  const lines=[
+    "تقرير معمل المجهر والأنسجة الأساسية",
+    "======================================",
+    "التاريخ: "+new Date().toLocaleString('ar'),
+    "",
+    "نوع النسيج في الخزعة الغامضة: "+TISSUES[mysteryKey].name,
+    "التصنيف النهائي للطالب: "+(finalClassifyCorrect?"صحيح ✔":"غير دقيق/غير مكتمل ✘"),
+    "",
+    "أسئلة الاختبار الختامي:",
+    ...QUIZ.map((item,i)=>`  ${i+1}. [${item.level}] ${item.q}`),
+    "",
+    "النتيجة في الاختبار: "+quizScore+" / "+total,
+    "النتيجة الإجمالية للتجربة: "+overall,
+    "",
+    "ملاحظة: هذا التقرير وُلِّد محليًا داخل متصفحك ولا يُرسل لأي خادم."
+  ].join("\n");
+  const blob=new Blob([lines], {type:"text/plain;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download="تقرير_معمل_المجهر.txt";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
